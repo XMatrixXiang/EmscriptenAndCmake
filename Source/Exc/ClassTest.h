@@ -17,6 +17,6 @@ protected:
 	int mInt = 0;
 	float mFloat = 0.0f;
 	double mDouble = 0.0;
-	std::string mString = u8"this is string!";
+	std::string mString = "this is string!";
 };
 

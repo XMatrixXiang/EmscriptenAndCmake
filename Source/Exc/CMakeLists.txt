@@ -2,7 +2,7 @@
 include(CMakeSources.cmake)
 
 
-
+set(TargetName Exc)
 # Targe
 add_executable(${TargetName} ${Exc_SRC})
 
