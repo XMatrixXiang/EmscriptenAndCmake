@@ -24,9 +24,9 @@ if(UNIX AND NOT APPLE)
 endif()
 
 # Global compile & linker flags
-### Target at least C++17
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+### Target at least C++14
+#set(CMAKE_CXX_STANDARD 14)
+#set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 ## Remove /EHsc from CMAKE_CXX_FLAGS for MSVC to disable exceptions
 if (MSVC)
