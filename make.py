@@ -7,7 +7,7 @@ from subprocess import Popen, PIPE, STDOUT
 
 INCLUDES = [
 os.path.join('Exc', 'CExport.h'),
-os.path.join('Exc', 'ClassTest.h')
+os.path.join('Exc', 'ClassTest.h'),
 os.path.join('..', 'ExportToJavaScript', 'idl_templates.h')]
 
 # Startup
@@ -27,7 +27,7 @@ def build():
     emcc = which('emcc')
     EMSCRIPTEN_ROOT = os.path.dirname(emcc)
   else:
-    EMSCRIPTEN_ROOT = os.path.json(EMSCRIPTEN_ROOT,'fastcomp','emscripten')
+    EMSCRIPTEN_ROOT = os.path.join(EMSCRIPTEN_ROOT,'fastcomp','emscripten')
 
   if not EMSCRIPTEN_ROOT:
     print "ERROR: EMSCRIPTEN_ROOT environment variable (which should be equal to emscripten's root dir) not found"
@@ -117,7 +117,7 @@ def build():
     os.chdir('Builds')
     if not os.path.exists('EmscritenBuild'):
        os.makedirs('EmscritenBuild')
-    os.chdir(EmscritenBuild)
+    os.chdir('EmscritenBuild')
 
     stage('Generate bindings')
 
@@ -136,16 +136,17 @@ def build():
     # Configure with CMake on Windows and  Unix.
     cmake_build = True
 
+    os.chdir(this_dir)
     if cmake_build:
       if not os.path.exists('CMakeCache.txt'):
         stage('Configure via CMake')
-        emscripten.Building.configure([emscripten.PYTHON, os.path.join(EMSCRIPTEN_ROOT, 'emcmake'), 'cmake', '..', '-DBUILD_DEMOS=OFF', '-DBUILD_EXTRAS=OFF', '-DBUILD_CPU_DEMOS=OFF', '-DUSE_GLUT=OFF', '-DCMAKE_BUILD_TYPE=Release'])
+        emscripten.Building.configure([emscripten.PYTHON, os.path.join(EMSCRIPTEN_ROOT, 'emcmake'), 'cmake', '-S' + this_dir, '-B'+ os.path.join(this_dir,'Builds','EmscritenBuild','GunBuild'), '-DCMAKE_BUILD_TYPE=Release'])
   
 
     stage('Make')
 
     CORES = multiprocessing.cpu_count()
-
+    os.chdir('Builds/EmscritenBuild/GunBuild')
     if emscripten.WINDOWS:
       emscripten.Building.make(['mingw32-make', '-j', str(CORES)])
     else:
@@ -153,12 +154,19 @@ def build():
 
     stage('Link')
 
+    os.chdir(this_dir)
+    os.chdir('Builds/EmscritenBuild')
+
     if cmake_build:
       bullet_libs = []
 
     stage('emcc: ' + ' '.join(emcc_args))
 
-    temp = os.path.join('..','JavaScriptSDK' target)
+    
+    exportDir = os.path.join('..','JavaScriptSDK')
+    temp = os.path.join(exportDir, target)
+    if not os.path.exists(exportDir):
+      os.makedirs(exportDir)
     emscripten.Building.emcc('-DNOTHING_WAKA_WAKA', emcc_args + ['glue.o'] + bullet_libs + ['--js-transform', 'python %s' % os.path.join('..', '..', 'bundle.py')],
                             temp)
 
