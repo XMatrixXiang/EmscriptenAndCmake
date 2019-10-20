@@ -34,4 +34,9 @@
 - ./configure
 - make
 - make install
+
+## 相关链接
+
+- [webidl](https://heycam.github.io/webidl "webidl")
+- [WebIDL bindings](https://developer.mozilla.org/en-US/docs/Mozilla/WebIDL_bindings "WebIDL bindings")
   
