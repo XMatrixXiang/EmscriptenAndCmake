@@ -1,5 +1,8 @@
 
 interface ClassTest {
+  void DebugDrawer();
   long getInt();
+  float getFloat();
+  double getDouble();
 };
 
