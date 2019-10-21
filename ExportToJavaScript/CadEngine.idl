@@ -1,6 +1,6 @@
 
 interface ClassTest {
-  void DebugDrawer();
+  void ClassTest();
   long getInt();
   float getFloat();
   double getDouble();
